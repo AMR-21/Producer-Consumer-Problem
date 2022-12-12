@@ -5,15 +5,12 @@
 #include <sys/shm.h>
 #include <sys/sem.h>
 #include <sys/types.h>
-#include <signal.h>
 #include <unistd.h>
 #include <string>
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
-
 #include <algorithm>
-#include <chrono>
 using namespace std;
 
 extern struct sembuf semWait;
@@ -98,7 +95,8 @@ int main(int argc, char **argv)
 
   // Init commodity in shared memory
   int r = rand();
-  key_t keyC = ftok("/", int(stod(argv[2]) + stod(argv[3]) + stod(argv[4]) + r));
+  key_t keyC = abs(r) + argv[1][0] + argv[1][1] + argv[1][2] + stoi(argv[2]) + stoi(argv[3]) + stoi(argv[4]);
+
   if ((cid = shmget(keyC, sizeof(Commodity *), 0666 | IPC_CREAT)) == -1)
   {
     perror("Inside producer commodity shared memory ");
