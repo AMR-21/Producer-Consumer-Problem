@@ -11,6 +11,7 @@
 #include <ctype.h>
 #include <time.h>
 #include <algorithm>
+#include <fcntl.h>
 using namespace std;
 
 extern struct sembuf semWait;
@@ -63,6 +64,11 @@ string uppercase(char *name)
 
 void logMessage(int id, char *name, double price, int sleep)
 {
+  // string fName = string(name) + ".txt";
+  // int defaulterr = dup(2);
+  // int logFl = open(fName.c_str(), O_CREAT | O_WRONLY | O_APPEND, 0666);
+  // dup2(logFl, 2);
+
   string timestamp = getTime();
   switch (id)
   {
@@ -76,9 +82,12 @@ void logMessage(int id, char *name, double price, int sleep)
     fprintf(stderr, "%s %s : placing %.2f on shared buffer\n", timestamp.c_str(), uppercase(name).c_str(), price);
     break;
   case 4:
-    fprintf(stderr, "%s %s : sleeping for %d ms\n", timestamp.c_str(), uppercase(name).c_str(), sleep);
+    fprintf(stderr, "%s %s : sleeping for %d ms\n\n", timestamp.c_str(), uppercase(name).c_str(), sleep);
     break;
   }
+
+  // close(logFl);
+  // dup2(defaulterr, 2);
 }
 
 int main(int argc, char **argv)
@@ -86,7 +95,7 @@ int main(int argc, char **argv)
 
   if (argc < 6)
   {
-    printf("Too few arguments");
+    printf("%s : Too few arguments", argv[1]);
     printf("\nAborting execution ...\n");
     exit(0);
   }
